@@ -961,7 +961,9 @@ void PASCAL _ReadIniFile(const wchar_t *FName, PTTSet ts)
 	ts->Telnet = GetOnOff(Section, "Telnet", FName, TRUE);
 
 	/* Telnet terminal type */
-	GetPrivateProfileString(Section, "TermType", "xterm", ts->TermType,
+	/* 既定を xterm-256color にして、接続先で TERM=xterm-256color となるようにする
+	   (256色対応。Claude Code 等が色を正しく出せる。env 設定不要) */
+	GetPrivateProfileString(Section, "TermType", "xterm-256color", ts->TermType,
 	                        sizeof(ts->TermType), FName);
 
 	/* TCP port num */
@@ -1611,6 +1613,10 @@ void PASCAL _ReadIniFile(const wchar_t *FName, PTTSet ts)
 	// Disable TranslateWheelToCursor setting when Control-Key is pressed.
 	ts->DisableWheelToCursorByCtrl =
 		GetOnOff(Section, "DisableWheelToCursorByCtrl", FName, TRUE);
+
+	// マウストラッキング中でも、修飾キー無しで左ドラッグ選択・右クリックペーストを許可する
+	ts->SelectByMouseTracking =
+		GetOnOff(Section, "SelectByMouseTracking", FName, TRUE);
 
 	// Strict Key Mapping.
 	ts->StrictKeyMapping =
@@ -2997,6 +3003,10 @@ void PASCAL _WriteIniFile(const wchar_t *FName, PTTSet ts)
 	// Disable TranslateWHeelToCursor when Control-Key is pressed.
 	WriteOnOff(Section, "DisableWheelToCursorByCtrl", FName,
 	           ts->DisableWheelToCursorByCtrl);
+
+	// マウストラッキング中でも修飾キー無しでローカル選択/ペーストを許可する
+	WriteOnOff(Section, "SelectByMouseTracking", FName,
+	           ts->SelectByMouseTracking);
 
 	// Strict Key Mapping.
 	WriteOnOff(Section, "StrictKeyMapping", FName,
