@@ -3,6 +3,8 @@
 これは [TeraTermProject/teraterm](https://github.com/TeraTermProject/teraterm) のフォークです。
 Claude Code を快適に利用するための独自修正を加えています。
 
+フォーク日時: **2026-06-13 19:43:22 (JST)** / 2026-06-13 10:43:22 (UTC)
+
 ## このフォークの主な変更点
 
 - **マウストラッキング中の選択・右クリックペースト対応**
