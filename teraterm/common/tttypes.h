@@ -492,6 +492,8 @@ struct tttset {
 	SIZE PasteDialogSize;
 	WORD DisableMouseTrackingByCtrl;
 	WORD DisableWheelToCursorByCtrl;
+	// マウストラッキング中でも修飾キー無しで左ドラッグ選択・右クリックペーストを許可する
+	WORD SelectByMouseTracking;
 	WORD StrictKeyMapping;
 	WORD Wait4allMacroCommand;
 	WORD DisableMenuSendBreak;

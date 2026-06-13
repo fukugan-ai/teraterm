@@ -924,7 +924,15 @@ void CVTWindow::ButtonDown(POINT p, int LMR)
 		return;
 	}
 
-	mousereport = MouseReport(IdMouseEventBtnDown, LMR, p.x, p.y);
+	// SelectByMouseTracking 有効時は、マウストラッキング中でも
+	// 左ボタン(選択)・右ボタン(ペースト)をアプリへ報告せずローカル処理する (修飾キー不要)
+	if (ts.SelectByMouseTracking &&
+	    (LMR == IdLeftButton || LMR == IdRightButton)) {
+		mousereport = FALSE;
+	}
+	else {
+		mousereport = MouseReport(IdMouseEventBtnDown, LMR, p.x, p.y);
+	}
 	if (mousereport) {
 		::SetCapture(m_hWnd);
 		return;
@@ -2322,7 +2330,8 @@ void CVTWindow::OnLButtonDblClk(WPARAM nFlags, POINTS point)
 	DblClkX = point.x;
 	DblClkY = point.y;
 
-	if (MouseReport(IdMouseEventBtnDown, IdLeftButton, DblClkX, DblClkY)) {
+	if (!ts.SelectByMouseTracking &&
+	    MouseReport(IdMouseEventBtnDown, IdLeftButton, DblClkX, DblClkY)) {
 		return;
 	}
 
@@ -2355,7 +2364,8 @@ void CVTWindow::OnLButtonUp(WPARAM nFlags, POINTS point)
 {
 	if (IgnoreRelease)
 		IgnoreRelease = FALSE;
-	else if (MouseReport(IdMouseEventBtnUp, IdLeftButton, point.x, point.y)) {
+	else if (!ts.SelectByMouseTracking &&
+	         MouseReport(IdMouseEventBtnUp, IdLeftButton, point.x, point.y)) {
 		ReleaseCapture();
 	}
 
@@ -2440,8 +2450,16 @@ void CVTWindow::OnMouseMove(WPARAM nFlags, POINTS point)
 	}
 #endif
 
-	if (!IgnoreRelease)
-		mousereport = MouseReport(IdMouseEventMove, 0, point.x, point.y);
+	if (!IgnoreRelease) {
+		// SelectByMouseTracking 有効時、ボタン押下中(ドラッグ選択中)は
+		// 移動をアプリへ報告せず、ローカル選択を優先する
+		if (ts.SelectByMouseTracking && (LButton || RButton)) {
+			mousereport = FALSE;
+		}
+		else {
+			mousereport = MouseReport(IdMouseEventMove, 0, point.x, point.y);
+		}
+	}
 
 	if (! (LButton || MButton || RButton)) {
 		if (BuffCheckMouseOnURL(point.x, point.y) && ts.EnableClickableUrl)
@@ -2646,7 +2664,8 @@ void CVTWindow::OnRButtonUp(UINT nFlags, POINTS point)
 {
 	if (IgnoreRelease)
 		IgnoreRelease = FALSE;
-	else if (MouseReport(IdMouseEventBtnUp, IdRightButton, point.x, point.y)) {
+	else if (!ts.SelectByMouseTracking &&
+	         MouseReport(IdMouseEventBtnUp, IdRightButton, point.x, point.y)) {
 		ReleaseCapture();
 	}
 

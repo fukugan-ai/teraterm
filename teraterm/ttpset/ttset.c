@@ -961,8 +961,17 @@ void PASCAL _ReadIniFile(const wchar_t *FName, PTTSet ts)
 	ts->Telnet = GetOnOff(Section, "Telnet", FName, TRUE);
 
 	/* Telnet terminal type */
-	GetPrivateProfileString(Section, "TermType", "xterm", ts->TermType,
+	/* 既定を xterm-256color にして、接続先で TERM=xterm-256color となるようにする
+	   (256色対応。Claude Code 等が色を正しく出せる。env 設定不要) */
+	GetPrivateProfileString(Section, "TermType", "xterm-256color", ts->TermType,
 	                        sizeof(ts->TermType), FName);
+	/* 既存の設定ファイルに古い "xterm" が保存されていても、256色を名乗るよう
+	   強制的に上書きする。これにより teraterm.ini を編集しなくても、接続先が
+	   TERM=xterm-256color となり Claude Code 等の色(オレンジ等)が正しく出る。
+	   "xterm" は 8 色端末として扱われてしまうための救済。 */
+	if (strcmp(ts->TermType, "xterm") == 0) {
+		strncpy_s(ts->TermType, sizeof(ts->TermType), "xterm-256color", _TRUNCATE);
+	}
 
 	/* TCP port num */
 	ts->TCPPort =
@@ -1611,6 +1620,10 @@ void PASCAL _ReadIniFile(const wchar_t *FName, PTTSet ts)
 	// Disable TranslateWheelToCursor setting when Control-Key is pressed.
 	ts->DisableWheelToCursorByCtrl =
 		GetOnOff(Section, "DisableWheelToCursorByCtrl", FName, TRUE);
+
+	// マウストラッキング中でも、修飾キー無しで左ドラッグ選択・右クリックペーストを許可する
+	ts->SelectByMouseTracking =
+		GetOnOff(Section, "SelectByMouseTracking", FName, TRUE);
 
 	// Strict Key Mapping.
 	ts->StrictKeyMapping =
@@ -2997,6 +3010,10 @@ void PASCAL _WriteIniFile(const wchar_t *FName, PTTSet ts)
 	// Disable TranslateWHeelToCursor when Control-Key is pressed.
 	WriteOnOff(Section, "DisableWheelToCursorByCtrl", FName,
 	           ts->DisableWheelToCursorByCtrl);
+
+	// マウストラッキング中でも修飾キー無しでローカル選択/ペーストを許可する
+	WriteOnOff(Section, "SelectByMouseTracking", FName,
+	           ts->SelectByMouseTracking);
 
 	// Strict Key Mapping.
 	WriteOnOff(Section, "StrictKeyMapping", FName,
