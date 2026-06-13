@@ -29,11 +29,14 @@ set_target_properties(TTXResizeMenu PROPERTIES FOLDER TTXSamples)
 add_subdirectory(TTXResizeWin)
 set_target_properties(TTXResizeWin PROPERTIES FOLDER TTXSamples)
 
-add_subdirectory(TTXShowCommandLine)
-set_target_properties(TTXShowCommandLine PROPERTIES FOLDER TTXSamples)
+# 起動毎にコマンドラインを警告ボックスで表示するだけのデモ。公式配布物にも含まれない
+# ため、ビルド対象から除外する。
+#add_subdirectory(TTXShowCommandLine)
+#set_target_properties(TTXShowCommandLine PROPERTIES FOLDER TTXSamples)
 
-add_subdirectory(ttxtest)
-set_target_properties(TTXtest PROPERTIES FOLDER TTXSamples)
+# テスト用プラグイン。公式配布物に含まれないため、ビルド対象から除外する。
+#add_subdirectory(ttxtest)
+#set_target_properties(TTXtest PROPERTIES FOLDER TTXSamples)
 
 add_subdirectory(TTXttyrec)
 set_target_properties(TTXttyrec PROPERTIES FOLDER TTXSamples)
