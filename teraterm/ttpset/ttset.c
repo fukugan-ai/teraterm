@@ -2023,6 +2023,9 @@ void PASCAL _ReadIniFile(const wchar_t *FName, PTTSet ts)
 	// rounded corner preference for VT/TEK window
 	ts->WindowCornerDontround = GetOnOff(Section, "WindowCornerDontround", FName, FALSE);
 
+	// ダークモード(ウィンドウ枠/スクロールバー/メニューバーの暗色化), 既定ON (fork)
+	ts->DarkMode = GetOnOff(Section, "DarkMode", FName, TRUE);
+
 	// 通知音
 	ts->NotifySound = GetOnOff(Section, "NotifySound", FName, TRUE);
 
@@ -3342,6 +3345,9 @@ void PASCAL _WriteIniFile(const wchar_t *FName, PTTSet ts)
 
 	// rounded corner preference for VT/TEK window
 	WriteOnOff(Section, "WindowCornerDontround", FName, ts->WindowCornerDontround);
+
+	// ダークモード(ウィンドウ枠/スクロールバー/メニューバーの暗色化) (fork)
+	WriteOnOff(Section, "DarkMode", FName, ts->DarkMode);
 
 	// 通知音
 	WriteOnOff(Section, "NotifySound", FName, ts->NotifySound);

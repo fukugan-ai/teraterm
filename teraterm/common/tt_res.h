@@ -125,6 +125,7 @@
 #define IDC_ENABLE_ATTR_FONT_UNDERLINE  1081
 #define IDC_ENABLE_ATTR_FONT_BOLD       1082
 #define IDC_CHECK_CORNERDONTROUND       1083
+#define IDC_CHECK_DARKMODE              2640
 #define IDC_SUBMITKEY_LABEL             1084
 #define IDC_SUBMITKEY_TYPE              1085
 #define IDD_PRNABORTDLG                 2100
@@ -361,7 +362,7 @@
 #define _APS_NO_MFC                     1
 #define _APS_NEXT_RESOURCE_VALUE        135
 #define _APS_NEXT_COMMAND_VALUE         52007
-#define _APS_NEXT_CONTROL_VALUE         2640
+#define _APS_NEXT_CONTROL_VALUE         2641
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

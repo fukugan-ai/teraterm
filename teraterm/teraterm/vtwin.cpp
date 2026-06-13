@@ -68,6 +68,7 @@
 #include "buffer.h"
 #include "cyglib.h"
 #include "theme.h"
+#include "dark_mode.h"
 
 #include <stdio.h>
 #define _CRTDBG_MAP_ALLOC
@@ -753,6 +754,13 @@ CVTWindow::CVTWindow(HINSTANCE hInstance)
 	if ((ts.HideTitle==0) && (ts.PopupMenu==0)) {
 		InitMenu(&MainMenu);
 		::SetMenu(HVTWin,MainMenu);
+	}
+
+	// ダークモード(ウィンドウ枠/スクロールバー/メニューバーの暗色化)
+	// メニューを設定した後に適用する (メニューバーを暗色描画させるため)
+	DarkMode_Initialize();
+	if (ts.DarkMode) {
+		DarkMode_ApplyToWindow(HVTWin, TRUE);
 	}
 
 	cv.StateEcho = MakeOutputStringCreate();
@@ -5620,6 +5628,11 @@ LRESULT CVTWindow::Proc(UINT msg, WPARAM wp, LPARAM lp)
 	}
 	default:
 	default_proc:
+		// ダークモード固有メッセージ(メニューバーのオーナードロー等)を委譲
+		retval = 0;
+		if (DarkMode_HandleWindowMessage(m_hWnd, msg, wp, lp, &retval)) {
+			break;
+		}
 		retval = DefWindowProc(msg, wp, lp);
 		break;
 	}
