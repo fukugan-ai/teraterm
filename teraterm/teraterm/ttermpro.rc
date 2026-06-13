@@ -13,7 +13,7 @@
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
-// âpåÍ (ïƒçë) resources
+// ÔøΩpÔøΩÔøΩ (ÔøΩƒçÔøΩ) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
 LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
@@ -191,6 +191,8 @@ BEGIN
     CONTROL         "Enable URL attribute font",IDC_ENABLE_ATTR_FONT_URL,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,148,171,124,12
     CONTROL         "Enable A&NSI color",IDC_ENABLE_ANSI_COLOR,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,148,183,124,12
+    CONTROL         "&Dark mode (frame / scrollbar / menu)",IDC_CHECK_DARKMODE,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,5,170,130,12
 END
 
 IDD_TABSHEET_LOG DIALOGEX 0, 0, 258, 234
@@ -784,7 +786,7 @@ BEGIN
     "I",            ID_ACC_DISCONNECT,      VIRTKEY, ALT, NOINVERT
 END
 
-#endif    // âpåÍ (ïƒçë) resources
+#endif    // ÔøΩpÔøΩÔøΩ (ÔøΩƒçÔøΩ) resources
 /////////////////////////////////////////////////////////////////////////////
 
 

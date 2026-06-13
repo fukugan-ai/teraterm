@@ -43,6 +43,7 @@
 #include "helpid.h"
 #include "tt_res.h"
 #include "tekwin.h"
+#include "dark_mode.h"
 #include "ttlib.h"
 #include <htmlhelp.h>
 #include "dlglib.h"
@@ -107,6 +108,12 @@ CTEKWindow::CTEKWindow(HINSTANCE hInstance)
 	if (ts.WindowCornerDontround && pDwmSetWindowAttribute != NULL) {
 		DWM_WINDOW_CORNER_PREFERENCE preference = DWMWCP_DONOTROUND;
 		pDwmSetWindowAttribute(HTEKWin, DWMWA_WINDOW_CORNER_PREFERENCE, &preference, sizeof(preference));
+	}
+
+	// ダークモード(ウィンドウ枠/スクロールバーの暗色化)
+	DarkMode_Initialize();
+	if (ts.DarkMode) {
+		DarkMode_ApplyToWindow(HTEKWin, TRUE);
 	}
 
 	tk.HWin = HTEKWin;
@@ -925,6 +932,11 @@ LRESULT CTEKWindow::Proc(UINT msg, WPARAM wp, LPARAM lp)
 		break;
 	}
 	default:
+		// ダークモード固有メッセージ(メニューバーのオーナードロー等)を委譲
+		retval = 0;
+		if (DarkMode_HandleWindowMessage(m_hWnd, msg, wp, lp, &retval)) {
+			break;
+		}
 		retval = DefWindowProc(msg, wp, lp);
 		break;
 	}

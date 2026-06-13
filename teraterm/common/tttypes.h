@@ -585,6 +585,7 @@ struct tttset {
 	WORD PluginVTIconID;
 	HINSTANCE TeraTermInstance;			// WinMain() 1番目の引数
 	WORD WindowCornerDontround;
+	WORD DarkMode;						// ウィンドウ枠/スクロールバー/メニューバーの暗色化 (fork)
 	wchar_t DialogFontNameW[LF_FACESIZE];
 	BOOL NotifySound;
 	wchar_t *LogDefaultNameW;

@@ -48,6 +48,7 @@
 #include "asprintf.h"
 #include "win32helper.h"
 #include "theme.h"
+#include "dark_mode.h"
 
 // proparty page
 #include "debug_pp.h"
@@ -717,6 +718,9 @@ void CVisualPropPageDlg::OnInitDialog()
 		}
 	}
 
+	// ダークモード(ウィンドウ枠/スクロールバー/メニューバーの暗色化)
+	SetCheck(IDC_CHECK_DARKMODE, (ts.DarkMode) != 0);
+
 	// ダイアログにフォーカスを当てる
 	::SetFocus(GetDlgItem(IDC_ALPHA_BLEND_ACTIVE));
 
@@ -1014,6 +1018,12 @@ void CVisualPropPageDlg::OnOK()
 			DWM_WINDOW_CORNER_PREFERENCE preference = ts.WindowCornerDontround ? DWMWCP_DONOTROUND : DWMWCP_DEFAULT;
 			pDwmSetWindowAttribute(HVTWin, DWMWA_WINDOW_CORNER_PREFERENCE, &preference, sizeof(preference));
 		}
+	}
+
+	// ダークモード(ウィンドウ枠/スクロールバー/メニューバーの暗色化)
+	if (ts.DarkMode != GetCheck(IDC_CHECK_DARKMODE)) {
+		ts.DarkMode = GetCheck(IDC_CHECK_DARKMODE);
+		DarkMode_ApplyToWindow(HVTWin, ts.DarkMode);
 	}
 
 	// ANSI Color

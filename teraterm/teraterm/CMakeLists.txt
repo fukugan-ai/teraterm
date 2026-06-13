@@ -81,6 +81,8 @@ add_executable(
   vtwin.h
   winjump.c
   winjump.h
+  dark_mode.cpp
+  dark_mode.h
 )
 
 set(SRC_DIALOG

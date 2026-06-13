@@ -54,6 +54,9 @@
     <ClCompile Include="vtwin.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="dark_mode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="buffer.c">
       <Filter>Source Files %28C%29</Filter>
     </ClCompile>
@@ -478,6 +481,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="vtwin.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="dark_mode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="vtdisp.h">
