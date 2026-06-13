@@ -11,8 +11,10 @@ set_target_properties(TTXCommandLineOpt PROPERTIES FOLDER TTXSamples)
 add_subdirectory(TTXCopyIniFile)
 set_target_properties(TTXCopyIniFile PROPERTIES FOLDER TTXSamples)
 
-add_subdirectory(TTXFixedWinSize)
-set_target_properties(TTXFixedWinSize PROPERTIES FOLDER TTXSamples)
+# ウィンドウサイズを 80x24 に強制するデモ。リサイズ不可になり公式配布にも
+# 含まれないため、ビルド対象から除外する。
+#add_subdirectory(TTXFixedWinSize)
+#set_target_properties(TTXFixedWinSize PROPERTIES FOLDER TTXSamples)
 
 add_subdirectory(TTXKcodeChange)
 set_target_properties(TTXKcodeChange PROPERTIES FOLDER TTXSamples)
