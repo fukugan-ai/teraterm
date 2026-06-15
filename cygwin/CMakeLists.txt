@@ -30,7 +30,7 @@ if(CMAKE_SIZEOF_VOID_P EQUAL 4)
     )
 else()
   # other build system...
-  if(${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.12.0")
+  if(FALSE AND ${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.12.0") # cygtool_build除外: Cygwin クロスコンパイラ必須・VS2026パイプライン外(Claude Code用途で不要)
     add_subdirectory(cygtool_build)
     if(TARGET cygtool)
       set_target_properties(
@@ -41,7 +41,7 @@ else()
 endif()
 
 # cygterm
-if(${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.12.0")
+if(FALSE AND ${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.12.0") # cygterm_build除外: Cygwin クロスコンパイラ必須・VS2026パイプライン外(Claude Code用途で不要)
   add_subdirectory(cygterm_build)
   set_target_properties(
     cygterm_build
