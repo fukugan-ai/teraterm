@@ -949,6 +949,13 @@ static int exec_shell(int* sh_pid, cfg_data_t *cfg)
             // set terminal type to $TERM
             setenv("TERM", cfg->term_type, 1);
         }
+        // truecolor 対応を子シェルへ通知する (fork)
+        // ローカル(cygterm)経路は別 exe で環境を独立管理しているため、
+        // telnet/SSH の COLORTERM 送出は届かない。ここで直接付与する。
+        // 既存値があれば尊重して上書きしない。
+        if (getenv("COLORTERM") == NULL) {
+            setenv("COLORTERM", "truecolor", 1);
+        }
         // set other additional env vars
         int i = 0;
         sh_env_t *sh_env = cfg->sh_env;

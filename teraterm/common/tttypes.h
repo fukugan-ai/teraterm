@@ -620,6 +620,10 @@ struct tttset {
 	BYTE UnicodeOverrideCharWidthSelected;	// 0...
 	int BroadcastSubmitKey;
 
+	// 接続先へ truecolor 対応(COLORTERM=truecolor)を通知する (fork)
+	// telnet=NEW-ENVIRON / SSH=env channel request / cygterm=子プロセス環境
+	WORD SendColorTermTruecolor;
+
 	// Experimental
 	BYTE ExperimentalTreePropertySheetEnable;
 };

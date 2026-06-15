@@ -85,7 +85,22 @@
 #define TERMSPEED  32
 #define TFLOWCNTRL 33
 #define LINEMODE   34
-#define MaxTelOpt  34
+#define XDISPLOC   35
+#define OLDENVIRON 36
+#define AUTHOPT    37
+#define ENCRYPTOPT 38
+#define NEWENVIRON 39	/* RFC 1572 New Environment Option (fork: COLORTERM 送出用) */
+#define MaxTelOpt  39
+
+/* NEW-ENVIRON sub-option commands (RFC 1572) */
+#define NENV_IS    0
+#define NENV_SEND  1
+#define NENV_INFO  2
+/* NEW-ENVIRON variable types */
+#define NENV_VAR   0
+#define NENV_VALUE 1
+#define NENV_ESC   2
+#define NENV_USERVAR 3
 
   /* Telnet status */
 #define TelIdle    0

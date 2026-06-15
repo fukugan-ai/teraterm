@@ -3733,6 +3733,11 @@ LRESULT CVTWindow::OnCommOpen(WPARAM wParam, LPARAM lParam)
 
 			TelEnableMyOpt(TERMSPEED);
 
+			// truecolor 通知(COLORTERM=truecolor)を NEW-ENVIRON で申し出る (fork)
+			// サーバが DO してくれば SB SEND に応じて値を返す。未対応サーバには届かない。
+			if (ts.SendColorTermTruecolor)
+				TelEnableMyOpt(NEWENVIRON);
+
 			TelStartKeepAliveThread();
 		}
 		else if (!ts.DisableTCPEchoCR) {

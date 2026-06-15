@@ -1625,6 +1625,10 @@ void PASCAL _ReadIniFile(const wchar_t *FName, PTTSet ts)
 	ts->SelectByMouseTracking =
 		GetOnOff(Section, "SelectByMouseTracking", FName, TRUE);
 
+	// 接続先へ truecolor 対応(COLORTERM=truecolor)を通知する (fork)
+	ts->SendColorTermTruecolor =
+		GetOnOff(Section, "SendColorTermTruecolor", FName, TRUE);
+
 	// Strict Key Mapping.
 	ts->StrictKeyMapping =
 		GetOnOff(Section, "StrictKeyMapping", FName, FALSE);
@@ -3017,6 +3021,10 @@ void PASCAL _WriteIniFile(const wchar_t *FName, PTTSet ts)
 	// マウストラッキング中でも修飾キー無しでローカル選択/ペーストを許可する
 	WriteOnOff(Section, "SelectByMouseTracking", FName,
 	           ts->SelectByMouseTracking);
+
+	// 接続先へ truecolor 対応(COLORTERM=truecolor)を通知する (fork)
+	WriteOnOff(Section, "SendColorTermTruecolor", FName,
+	           ts->SendColorTermTruecolor);
 
 	// Strict Key Mapping.
 	WriteOnOff(Section, "StrictKeyMapping", FName,

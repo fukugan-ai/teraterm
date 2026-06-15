@@ -121,6 +121,10 @@ void InitTelnet(void)
 	tr.MyOpt[TERMSPEED].Accept = TRUE;
 	tr.MyOpt[NAWS].Accept = TRUE;
 	tr.HisOpt[NAWS].Accept = TRUE;
+	// truecolor 通知 (COLORTERM=truecolor) を NEW-ENVIRON で送る (fork)
+	if (ts.SendColorTermTruecolor) {
+		tr.MyOpt[NEWENVIRON].Accept = TRUE;
+	}
 	tr.WinSize.x = ts.TerminalWidth;
 	tr.WinSize.y = ts.TerminalHeight;
 
@@ -226,6 +230,55 @@ static void SendWinSize(void)
 		TelWriteLog(TmpBuff, i);
 }
 
+// NEW-ENVIRON (RFC 1572) で COLORTERM=truecolor を送る (fork)
+// 接続先アプリ(Claude Code 等)に truecolor 対応端末だと認識させ、
+// 16色赤(SGR31)ではなく 256色/24bit のオレンジを送らせるための通知。
+// サーバが NEW-ENVIRON を DO してきた時のみ呼ばれる(未対応サーバには届かない)。
+static void TelPutEnvStr(BYTE *Buf, int *pi, const char *s)
+{
+	// SB データ中の値 255 は IAC エスケープが必要(RFC 854)。
+	// COLORTERM/truecolor/TERM 値は ASCII のため通常エスケープは発生しない。
+	int i = *pi;
+	while (*s != '\0') {
+		BYTE c = (BYTE)*s++;
+		if (c == IAC) {
+			Buf[i++] = IAC;
+		}
+		Buf[i++] = c;
+	}
+	*pi = i;
+}
+
+static void SendNewEnviron(void)
+{
+	BYTE TmpBuff[128];
+	int i = 0;
+
+	TmpBuff[i++] = IAC;
+	TmpBuff[i++] = SB;
+	TmpBuff[i++] = NEWENVIRON;
+	TmpBuff[i++] = NENV_IS;
+
+	// COLORTERM=truecolor (アプリ慣習の USERVAR)
+	TmpBuff[i++] = NENV_USERVAR;
+	TelPutEnvStr(TmpBuff, &i, "COLORTERM");
+	TmpBuff[i++] = NENV_VALUE;
+	TelPutEnvStr(TmpBuff, &i, "truecolor");
+
+	// TERM も well-known VAR として併せて通知(TERMTYPE 経路の補強)
+	TmpBuff[i++] = NENV_VAR;
+	TelPutEnvStr(TmpBuff, &i, "TERM");
+	TmpBuff[i++] = NENV_VALUE;
+	TelPutEnvStr(TmpBuff, &i, ts.TermType);
+
+	TmpBuff[i++] = IAC;
+	TmpBuff[i++] = SE;
+
+	CommRawOut(&cv, TmpBuff, i);
+	if (tr.LogFile)
+		TelWriteLog(TmpBuff, i);
+}
+
 static void ParseTelIAC(BYTE b)
 {
 	switch (b) {
@@ -300,6 +353,13 @@ static void ParseTelSB(BYTE b)
 					tr.WinSize.x = tr.SubOptBuff[1]*256 + tr.SubOptBuff[2];
 					tr.WinSize.y = tr.SubOptBuff[3]*256 + tr.SubOptBuff[4];
 					tr.ChangeWinSize = TRUE;
+				}
+				break;
+
+			case NEWENVIRON:
+				// サーバから SB NEWENVIRON SEND が来たら IS で環境変数を返す (fork)
+				if ((tr.MyOpt[NEWENVIRON].Status == Yes) && (tr.SubOptBuff[1] == NENV_SEND)) {
+					SendNewEnviron();
 				}
 				break;
 

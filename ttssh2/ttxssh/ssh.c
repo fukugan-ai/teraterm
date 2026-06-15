@@ -8382,6 +8382,46 @@ static BOOL send_channel_request_gen(PTInstVar pvar, Channel_t *c, unsigned char
 	return TRUE;
 }
 
+// env channel request で COLORTERM=truecolor を送る (fork)
+// 接続先アプリ(Claude Code 等)に truecolor 対応端末だと認識させ、16色赤ではなく
+// 24bit/256色のオレンジを送らせる。pty-req と shell の間に送る必要がある。
+// リモート sshd は AcceptEnv 設定によりこの env を黙って破棄しうる(これは仕様)。
+// want_reply=0 で送るため session_nego_status の状態機械には影響しない。
+static void send_env_request(PTInstVar pvar, Channel_t *c, const char *name, const char *value)
+{
+	buffer_t *msg;
+	unsigned char *outmsg;
+	int len;
+	char *req_type = "env";
+
+	if (c->remote_id == SSH_CHANNEL_INVALID) {
+		logprintf(LOG_LEVEL_ERROR, "%s: invalid remote channel number.", __FUNCTION__);
+		return;
+	}
+
+	msg = buffer_init();
+	if (msg == NULL) {
+		logprintf(LOG_LEVEL_ERROR, "%s: buffer_init returns NULL.", __FUNCTION__);
+		return;
+	}
+
+	buffer_put_int(msg, c->remote_id);
+	buffer_put_string(msg, req_type, strlen(req_type));
+	buffer_put_char(msg, 0);  // want_reply = false
+	buffer_put_string(msg, name, strlen(name));
+	buffer_put_string(msg, value, strlen(value));
+
+	len = buffer_len(msg);
+	outmsg = begin_send_packet(pvar, SSH2_MSG_CHANNEL_REQUEST, len);
+	memcpy(outmsg, buffer_ptr(msg), len);
+	finish_send_packet(pvar);
+	buffer_free(msg);
+
+	logprintf(LOG_LEVEL_VERBOSE, "%s: sending SSH2_MSG_CHANNEL_REQUEST. "
+	          "local: %d, remote: %d, request-type: env, %s=%s", __FUNCTION__,
+	          c->self_id, c->remote_id, name, value);
+}
+
 BOOL send_pty_request(PTInstVar pvar, Channel_t *c)
 {
 	buffer_t *msg, *ttymsg;
@@ -8456,6 +8496,12 @@ BOOL send_pty_request(PTInstVar pvar, Channel_t *c)
 	finish_send_packet(pvar);
 	buffer_free(msg);
 	buffer_free(ttymsg);
+
+	// pty-req と shell の間で COLORTERM=truecolor を申告する (fork)
+	// (リモート sshd の AcceptEnv 次第で破棄されうる)
+	if (pvar->ts->SendColorTermTruecolor) {
+		send_env_request(pvar, c, "COLORTERM", "truecolor");
+	}
 
 	logprintf(LOG_LEVEL_VERBOSE, "%s: sending SSH2_MSG_CHANNEL_REQUEST. "
 	          "local: %d, remote: %d, request-type: %s, "
